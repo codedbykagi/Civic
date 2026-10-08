@@ -16,7 +16,8 @@ object ReportsTable : Table("reports") {
     val authorId = varchar("author_id", 36).references(UsersTable.id)
     val category = varchar("category", 32)
     val description = text("description")
-    val imageUrl = varchar("image_url", 500)
+    val imageUrl = varchar("image_url", 500).nullable() // null = report without a photo
+    val timeOfDay = varchar("time_of_day", 16).nullable()
     val latitude = double("latitude")
     val longitude = double("longitude")
     val address = varchar("address", 255).nullable()

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Route destination flag on the map (dark, with a white edge so it reads on any tile). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp" android:height="32dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="#222222" android:strokeColor="#FFFFFF" android:strokeWidth="1"
+        android:pathData="M14.4,6L14,4H5v17h2v-7h5.6l0.4,2h7V6z"/>
+</vector>

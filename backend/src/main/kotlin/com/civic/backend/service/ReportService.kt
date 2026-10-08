@@ -24,6 +24,7 @@ class ReportService(private val repository: ReportRepository) {
             imageUrl = request.imageUrl,
             location = request.location,
             capturedAt = request.capturedAt,
+            timeOfDay = request.timeOfDay,
             createdAt = System.currentTimeMillis(),
         )
         return repository.save(report)

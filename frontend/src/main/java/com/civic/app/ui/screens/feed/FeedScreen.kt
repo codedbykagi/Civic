@@ -17,15 +17,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.civic.app.R
 import com.civic.app.ui.components.PlaceholderScreen
+import com.civic.app.ui.components.QuickUnsafePanel
 import com.civic.app.ui.components.ReportCard
+import com.civic.app.ui.components.rememberQuickReportAction
 import com.civic.app.ui.displayName
 import com.civic.shared.model.IssueCategory
 import com.civic.shared.model.IssueStatus
 
-/** Social feed of issue reports (stored on this device in the prototype), filterable by status and category. */
+/**
+ * Home: the one-tap "felt unsafe" panel (so it is one tap from opening the app), then the civic issue feed,
+ * filterable by status and category. Private safety reports are not listed here.
+ */
 @Composable
 fun FeedScreen(
     onOpenReport: (Long) -> Unit,
@@ -33,18 +40,11 @@ fun FeedScreen(
 ) {
     val reports by viewModel.reports.collectAsState()
     val filter by viewModel.filter.collectAsState()
+    val quickReport = rememberQuickReportAction()
     val list = reports
 
     if (list == null) {
         PlaceholderScreen("Loading…", "") { CircularProgressIndicator() }
-        return
-    }
-    // Nothing posted yet: show onboarding instead of filters with nothing to filter.
-    if (list.isEmpty() && !filter.isActive) {
-        PlaceholderScreen(
-            "No reports yet",
-            "Tap the Report tab to photograph a pothole, fire, fallen tree or other issue.",
-        )
         return
     }
 
@@ -54,8 +54,29 @@ fun FeedScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
+            Column {
+                Text("Civic", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    stringResource(R.string.app_tagline),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
+        item { QuickUnsafePanel(onReport = quickReport, compact = true) }
+        if (list.isEmpty() && !filter.isActive) {
+            item {
+                Text(
+                    "No civic reports yet. Use the Report tab to photograph a pothole, fallen tree or other problem.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 24.dp),
+                )
+            }
+            return@LazyColumn
+        }
+        item {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text("Civic feed", style = MaterialTheme.typography.headlineSmall)
+                Text("Civic feed", style = MaterialTheme.typography.titleMedium)
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(IssueStatus.entries) { s ->
                         FilterChip(
@@ -66,7 +87,7 @@ fun FeedScreen(
                     }
                 }
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(IssueCategory.entries) { c ->
+                    items(IssueCategory.CIVIC) { c ->
                         FilterChip(
                             selected = filter.category == c,
                             onClick = { viewModel.toggleCategory(c) },

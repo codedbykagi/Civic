@@ -6,6 +6,12 @@ Kept short on purpose. For code details, query the graph (see CLAUDE.md) instead
 A social-style Android app for reporting local issues (potholes, small fires, fallen trees, etc.).
 A user takes a photo; the app tags it with GPS location and time, saves a record on the device, and posts it to a public feed.
 
+## In progress (2026-10-09, v0.3.0 — women & child safety; uncommitted)
+- Built: one-tap "felt unsafe" (Women/Children/Everyone) + launcher shortcuts + Undo snackbar (`safety/QuickReporter`); optional photo; sun-based time-of-day (`safety/time`); safety tags; private safety reports (not in feed; `ui/screens/safety`); heat zones by colour (`safety/zones`, Tol colours); walking routes with fewer reported zones via FOSSGIS Valhalla, OSRM fallback (`safety/routing`) + Google Maps URL hand-off; helplines 112/181/1098; DB v3 (`MIGRATION_2_3`, schema exported to `frontend/schemas`).
+- Verified: 95 unit tests pass, lint clean, 2→3 migration on emulator kept reports + comment; one-tap reports work.
+- Not yet done: live route request on emulator; adversarial review (stopped; partial results in workflow journal wf_9386d87e-c68); wrap >120-char lines; copy APK to `releases/`; `graphify update .`.
+- Known: backend `ApplicationTest.healthCheckReturnsOk` fails on HEAD too (no `/health` route). Research notes on Google Maps viability are in this session's scratchpad (`research_google-maps.md`) — pending the user's decision.
+
 ## Status (as of 2026-10-09)
 - **Prototype APK built:** `releases/Civic-v0.2.0-prototype.apk` (debug-signed, versionCode 2). Install steps are in `releases/README.md`.
 - **What the prototype does:** it works offline, with everything stored in Room on the phone (DB v2).

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Long-press the app icon → one tap files an "I felt unsafe here" report with GPS and time. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="unsafe_women"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_unsafe"
+        android:shortcutShortLabel="@string/shortcut_unsafe_women_short"
+        android:shortcutLongLabel="@string/shortcut_unsafe_women_long">
+        <intent
+            android:action="com.civic.app.action.QUICK_UNSAFE"
+            android:targetPackage="com.civic.app"
+            android:targetClass="com.civic.app.MainActivity">
+            <extra android:name="category" android:value="UNSAFE_WOMEN" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="unsafe_children"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_unsafe"
+        android:shortcutShortLabel="@string/shortcut_unsafe_children_short"
+        android:shortcutLongLabel="@string/shortcut_unsafe_children_long">
+        <intent
+            android:action="com.civic.app.action.QUICK_UNSAFE"
+            android:targetPackage="com.civic.app"
+            android:targetClass="com.civic.app.MainActivity">
+            <extra android:name="category" android:value="UNSAFE_CHILDREN" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="unsafe_everyone"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_unsafe"
+        android:shortcutShortLabel="@string/shortcut_unsafe_everyone_short"
+        android:shortcutLongLabel="@string/shortcut_unsafe_everyone_long">
+        <intent
+            android:action="com.civic.app.action.QUICK_UNSAFE"
+            android:targetPackage="com.civic.app"
+            android:targetClass="com.civic.app.MainActivity">
+            <extra android:name="category" android:value="UNSAFE_GENERAL" />
+        </intent>
+    </shortcut>
+</shortcuts>

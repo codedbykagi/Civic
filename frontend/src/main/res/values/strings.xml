@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Civic</string>
+    <string name="app_tagline">Civic services · Safety for women &amp; children</string>
+    <string name="shortcut_unsafe_women_short">Unsafe: women</string>
+    <string name="shortcut_unsafe_women_long">Felt unsafe here (women)</string>
+    <string name="shortcut_unsafe_children_short">Unsafe: children</string>
+    <string name="shortcut_unsafe_children_long">Felt unsafe here (children)</string>
+    <string name="shortcut_unsafe_everyone_short">Unsafe: everyone</string>
+    <string name="shortcut_unsafe_everyone_long">Felt unsafe here (everyone)</string>
 </resources>

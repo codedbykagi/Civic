@@ -30,10 +30,10 @@ class FeedViewModel(private val repository: ReportRepository) : ViewModel() {
     private val _filter = MutableStateFlow(FeedFilter())
     val filter: StateFlow<FeedFilter> = _filter.asStateFlow()
 
-    /** null = still loading. Map and Profile never set a filter, so they see every report. */
+    /** Civic reports only (null = still loading); private safety reports never appear in the feed. */
     @OptIn(ExperimentalCoroutinesApi::class)
     val reports: StateFlow<List<ReportEntity>?> = _filter
-        .flatMapLatest { repository.observeLocalFeed(it.category, it.status) }
+        .flatMapLatest { repository.observeCivicFeed(it.category, it.status) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     /** Tapping the selected chip again clears it. */

@@ -10,7 +10,10 @@ import com.civic.app.CivicApplication
 import com.civic.app.data.local.CommentEntity
 import com.civic.app.data.local.ReportEntity
 import com.civic.app.data.repository.ReportRepository
+import com.civic.shared.model.IssueCategory
 import com.civic.shared.model.IssueStatus
+import com.civic.shared.model.SafetyTag
+import com.civic.shared.model.TimeOfDay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -44,6 +47,18 @@ class ReportDetailViewModel(private val reportId: Long, private val repository: 
 
     fun upvote() {
         viewModelScope.launch { repository.upvote(reportId) }
+    }
+
+    /** [timeOfDay] null = keep deriving it from the capture time and place. */
+    fun updateDetails(category: IssueCategory, description: String, timeOfDay: TimeOfDay?, tags: Set<SafetyTag>) {
+        viewModelScope.launch { repository.updateDetails(reportId, category, description.trim(), timeOfDay, tags) }
+    }
+
+    fun delete(onDeleted: () -> Unit) {
+        viewModelScope.launch {
+            repository.delete(reportId)
+            onDeleted()
+        }
     }
 
     companion object {

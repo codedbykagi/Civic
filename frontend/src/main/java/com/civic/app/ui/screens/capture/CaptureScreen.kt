@@ -39,9 +39,9 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.civic.app.appContainer
 import com.civic.app.camera.PhotoStorage
-import com.civic.app.data.Draft
 import com.civic.app.ui.components.PlaceholderScreen
 import com.civic.app.ui.openAppSettings
+import com.civic.shared.model.GeoLocation
 import kotlinx.coroutines.launch
 
 private val REQUIRED_PERMISSIONS = arrayOf(
@@ -50,9 +50,16 @@ private val REQUIRED_PERMISSIONS = arrayOf(
     Manifest.permission.ACCESS_COARSE_LOCATION,
 )
 
-/** Camera screen: live preview, take photo, tag it with GPS + time, then go to the post form. */
+/**
+ * Camera screen: live preview, take a photo, tag it with GPS + time and hand it to [onPhotoCaptured]
+ * (the caller decides whether it starts a new report, joins the form's draft or attaches to an existing report).
+ * [needsLocation] false skips the GPS wait, e.g. when adding a photo to a report that already has a position.
+ */
 @Composable
-fun CaptureScreen(onPhotoCaptured: () -> Unit) {
+fun CaptureScreen(
+    onPhotoCaptured: suspend (photoPath: String, capturedAt: Long, location: GeoLocation?) -> Unit,
+    needsLocation: Boolean = true,
+) {
     val context = LocalContext.current
     fun granted(p: String) = ContextCompat.checkSelfPermission(context, p) == PackageManager.PERMISSION_GRANTED
 
@@ -83,11 +90,14 @@ fun CaptureScreen(onPhotoCaptured: () -> Unit) {
         return
     }
 
-    CameraPreview(onPhotoCaptured)
+    CameraPreview(onPhotoCaptured, needsLocation)
 }
 
 @Composable
-private fun CameraPreview(onPhotoCaptured: () -> Unit) {
+private fun CameraPreview(
+    onPhotoCaptured: suspend (photoPath: String, capturedAt: Long, location: GeoLocation?) -> Unit,
+    needsLocation: Boolean,
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
@@ -129,11 +139,13 @@ private fun CameraPreview(onPhotoCaptured: () -> Unit) {
                     object : ImageCapture.OnImageSavedCallback {
                         override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                             scope.launch {
-                                val container = context.appContainer
-                                val location = runCatching { container.locationProvider.currentLocation() }.getOrNull()
-                                container.draftStore.replace(Draft(file.absolutePath, location, capturedAt))
+                                val location = if (needsLocation) {
+                                    runCatching { context.appContainer.locationProvider.currentLocation() }.getOrNull()
+                                } else {
+                                    null
+                                }
                                 busy = false
-                                onPhotoCaptured()
+                                onPhotoCaptured(file.absolutePath, capturedAt, location)
                             }
                         }
 
@@ -148,7 +160,7 @@ private fun CameraPreview(onPhotoCaptured: () -> Unit) {
             if (busy) CircularProgressIndicator() else Icon(Icons.Filled.PhotoCamera, contentDescription = "Take photo")
         }
 
-        if (busy) {
+        if (busy && needsLocation) {
             Text(
                 "Getting GPS location…",
                 modifier = Modifier.align(Alignment.TopCenter).padding(16.dp),

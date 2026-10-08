@@ -48,3 +48,22 @@ fun openAppSettings(context: Context) {
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null))
     context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 }
+
+/** Opens the dialer with [number] filled in; the user still taps Call (no CALL_PHONE permission, no pocket-dials). */
+fun dial(context: Context, number: String) {
+    try {
+        context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number")))
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(context, "No phone app: call $number from another phone", Toast.LENGTH_LONG).show()
+    }
+}
+
+/** Opens a web link (or the app that handles it, e.g. Google Maps for maps URLs). */
+fun openUrl(context: Context, url: String) {
+    try {
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(context, "No app can open this link", Toast.LENGTH_SHORT).show()
+    }
+}
+

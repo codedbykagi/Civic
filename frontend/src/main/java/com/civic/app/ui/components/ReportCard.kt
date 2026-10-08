@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.civic.app.data.local.ReportEntity
+import com.civic.app.safety.effectiveTimeOfDay
 import com.civic.app.ui.categoryName
 import com.civic.app.ui.displayName
 import com.civic.app.ui.formatCoords
@@ -54,12 +55,14 @@ fun ReportCard(
     var confirmDelete by remember { mutableStateOf(false) }
 
     Card(onClick = onOpen, modifier = modifier.fillMaxWidth()) {
-        AsyncImage(
-            model = File(report.localImagePath),
-            contentDescription = categoryName,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth().height(220.dp),
-        )
+        report.localImagePath?.let { path ->
+            AsyncImage(
+                model = File(path),
+                contentDescription = categoryName,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth().height(220.dp),
+            )
+        }
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(categoryName, style = MaterialTheme.typography.titleMedium)
@@ -69,7 +72,10 @@ fun ReportCard(
                 Text(report.description, style = MaterialTheme.typography.bodyMedium)
             }
             Text("📍 ${formatCoords(report.latitude, report.longitude)}", style = MaterialTheme.typography.bodySmall)
-            Text("🕒 ${formatTime(report.capturedAt)}", style = MaterialTheme.typography.bodySmall)
+            Text(
+                "🕒 ${formatTime(report.capturedAt)} · ${report.effectiveTimeOfDay.displayName}",
+                style = MaterialTheme.typography.bodySmall,
+            )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 TextButton(onClick = onUpvote) {
                     Icon(Icons.Filled.ThumbUp, contentDescription = "Upvote")

@@ -96,16 +96,16 @@
     "semantic_hash": "3d50d69ebc78ab859e3e389bb0b2fb21"
   },
   "frontend/build.gradle.kts": {
-    "mtime": 1791451575.9051235,
-    "seen": 1791452663.547491,
-    "ast_hash": "b7db8bdb4ea62c4ea008fe1189b7ae6e",
-    "semantic_hash": "b7db8bdb4ea62c4ea008fe1189b7ae6e"
+    "mtime": 1791494050.2530763,
+    "seen": 1791494783.0668073,
+    "ast_hash": "c178723d0030aeadbf26d86e10dd9ba2",
+    "semantic_hash": "c178723d0030aeadbf26d86e10dd9ba2"
   },
   "frontend/src/main/java/com/civic/app/CivicApplication.kt": {
-    "mtime": 1791461497.844959,
-    "seen": 1791464204.6044288,
-    "ast_hash": "bd217e49c2addb021d862ebdb0613974",
-    "semantic_hash": "bd217e49c2addb021d862ebdb0613974"
+    "mtime": 1791493861.5658975,
+    "seen": 1791494783.0668092,
+    "ast_hash": "765d4590c1cac1de7975c58576f87d9e",
+    "semantic_hash": "765d4590c1cac1de7975c58576f87d9e"
   },
   "frontend/src/main/java/com/civic/app/MainActivity.kt": {
     "mtime": 1791451628.1429927,
@@ -120,22 +120,22 @@
     "semantic_hash": "efff431564345a9b5c96442db46686cf"
   },
   "frontend/src/main/java/com/civic/app/data/local/CivicDatabase.kt": {
-    "mtime": 1791451689.6554642,
-    "seen": 1791452663.5474946,
-    "ast_hash": "9bc994efff1306bb5b0929ff7d679ba0",
-    "semantic_hash": "9bc994efff1306bb5b0929ff7d679ba0"
+    "mtime": 1791493861.4890566,
+    "seen": 1791494783.0668142,
+    "ast_hash": "be533c546a7ed9fac8382488cbf43cfa",
+    "semantic_hash": "be533c546a7ed9fac8382488cbf43cfa"
   },
   "frontend/src/main/java/com/civic/app/data/local/ReportDao.kt": {
-    "mtime": 1791461494.6691062,
-    "seen": 1791464204.6044357,
-    "ast_hash": "ac76d0a68284579b1061b6a958bdc534",
-    "semantic_hash": "ac76d0a68284579b1061b6a958bdc534"
+    "mtime": 1791493861.5120776,
+    "seen": 1791494783.0668182,
+    "ast_hash": "debc6b5bfec80c5e9a48d2f2325f4945",
+    "semantic_hash": "debc6b5bfec80c5e9a48d2f2325f4945"
   },
   "frontend/src/main/java/com/civic/app/data/local/ReportEntity.kt": {
-    "mtime": 1791461493.6078744,
-    "seen": 1791464204.6044369,
-    "ast_hash": "ebb166779e7dc25745017c97a7c75335",
-    "semantic_hash": "ebb166779e7dc25745017c97a7c75335"
+    "mtime": 1791493861.421763,
+    "seen": 1791494783.0668197,
+    "ast_hash": "36329514ed20fb93febd20cce4797b85",
+    "semantic_hash": "36329514ed20fb93febd20cce4797b85"
   },
   "frontend/src/main/java/com/civic/app/data/remote/ApiClient.kt": {
     "mtime": 1791451685.421633,
@@ -150,16 +150,16 @@
     "semantic_hash": "ba9c871ceb0d581f420caaf3eafd2ae3"
   },
   "frontend/src/main/java/com/civic/app/data/repository/ReportRepository.kt": {
-    "mtime": 1791461495.722184,
-    "seen": 1791464204.6044407,
-    "ast_hash": "71e6eeea4c93f96a7dbbda4f20cbf7d4",
-    "semantic_hash": "71e6eeea4c93f96a7dbbda4f20cbf7d4"
+    "mtime": 1791493861.5360281,
+    "seen": 1791494783.0668235,
+    "ast_hash": "a572e511ff547b8c74f7bca5f008d2c7",
+    "semantic_hash": "a572e511ff547b8c74f7bca5f008d2c7"
   },
   "frontend/src/main/java/com/civic/app/location/LocationProvider.kt": {
-    "mtime": 1791461520.7617283,
-    "seen": 1791464204.6044416,
-    "ast_hash": "60b9c3431b18f08679f77018a18ca9c3",
-    "semantic_hash": "60b9c3431b18f08679f77018a18ca9c3"
+    "mtime": 1791493885.065432,
+    "seen": 1791494783.0668247,
+    "ast_hash": "70afd74b101e14ff6c8606938c3cede1",
+    "semantic_hash": "70afd74b101e14ff6c8606938c3cede1"
   },
   "frontend/src/main/java/com/civic/app/ui/components/PlaceholderScreen.kt": {
     "mtime": 1791451632.3869996,
@@ -168,58 +168,58 @@
     "semantic_hash": "6df14482692b1ef2f6499bff3abbdf95"
   },
   "frontend/src/main/java/com/civic/app/ui/components/ReportCard.kt": {
-    "mtime": 1791461574.1639771,
-    "seen": 1791464204.604445,
-    "ast_hash": "281fa44174e5259182e03832f7569927",
-    "semantic_hash": "281fa44174e5259182e03832f7569927"
+    "mtime": 1791494005.0975497,
+    "seen": 1791494783.066828,
+    "ast_hash": "9c7cad5fdaa591cbcbd6c724b336a751",
+    "semantic_hash": "9c7cad5fdaa591cbcbd6c724b336a751"
   },
   "frontend/src/main/java/com/civic/app/ui/navigation/CivicNavHost.kt": {
-    "mtime": 1791451631.325764,
-    "seen": 1791452663.5475035,
-    "ast_hash": "641b4bda2c7a42d6a8290213472fa3de",
-    "semantic_hash": "641b4bda2c7a42d6a8290213472fa3de"
+    "mtime": 1791494042.7960293,
+    "seen": 1791494783.0668297,
+    "ast_hash": "ee6d8b96879b4d58a689755a6c2e45d0",
+    "semantic_hash": "ee6d8b96879b4d58a689755a6c2e45d0"
   },
   "frontend/src/main/java/com/civic/app/ui/navigation/Screen.kt": {
-    "mtime": 1791451630.264111,
-    "seen": 1791452663.5475042,
-    "ast_hash": "416044124e08b2df571d8d6559f07e01",
-    "semantic_hash": "416044124e08b2df571d8d6559f07e01"
+    "mtime": 1791494043.4708166,
+    "seen": 1791494783.0668309,
+    "ast_hash": "003b86f61786f22805d51cf00a4ee134",
+    "semantic_hash": "003b86f61786f22805d51cf00a4ee134"
   },
   "frontend/src/main/java/com/civic/app/ui/screens/capture/CaptureScreen.kt": {
-    "mtime": 1791461526.0242832,
-    "seen": 1791464204.6044483,
-    "ast_hash": "2be39e67194c928b01dad576b2848ced",
-    "semantic_hash": "2be39e67194c928b01dad576b2848ced"
+    "mtime": 1791494416.0802202,
+    "seen": 1791494783.066832,
+    "ast_hash": "a18fd3252c451eb7caa61913daad369f",
+    "semantic_hash": "a18fd3252c451eb7caa61913daad369f"
   },
   "frontend/src/main/java/com/civic/app/ui/screens/feed/FeedScreen.kt": {
-    "mtime": 1791461573.107308,
-    "seen": 1791464204.6044493,
-    "ast_hash": "aa47e8d51ca4e0e39a549e973dbe5eda",
-    "semantic_hash": "aa47e8d51ca4e0e39a549e973dbe5eda"
+    "mtime": 1791494005.4916232,
+    "seen": 1791494783.0668354,
+    "ast_hash": "e80af79fe36bd26f2615619cb434ecf6",
+    "semantic_hash": "e80af79fe36bd26f2615619cb434ecf6"
   },
   "frontend/src/main/java/com/civic/app/ui/screens/feed/FeedViewModel.kt": {
-    "mtime": 1791461572.0478632,
-    "seen": 1791464204.6044505,
-    "ast_hash": "acf9993daa681e9c663738731cf1793c",
-    "semantic_hash": "acf9993daa681e9c663738731cf1793c"
+    "mtime": 1791494005.3325367,
+    "seen": 1791494783.0668368,
+    "ast_hash": "156110b39ea7df9b6011fc9b83e7ec2f",
+    "semantic_hash": "156110b39ea7df9b6011fc9b83e7ec2f"
   },
   "frontend/src/main/java/com/civic/app/ui/screens/map/MapScreen.kt": {
-    "mtime": 1791461575.2255027,
-    "seen": 1791464204.6044517,
-    "ast_hash": "f7571b11af4c5e8a42942d600abb965a",
-    "semantic_hash": "f7571b11af4c5e8a42942d600abb965a"
+    "mtime": 1791494542.882181,
+    "seen": 1791494783.0668378,
+    "ast_hash": "5e11fc63d4043a42b10a2e491e49b208",
+    "semantic_hash": "5e11fc63d4043a42b10a2e491e49b208"
   },
   "frontend/src/main/java/com/civic/app/ui/screens/profile/ProfileScreen.kt": {
-    "mtime": 1791461576.2951903,
-    "seen": 1791464204.6044526,
-    "ast_hash": "9e49719a10767b731255120d30cb6332",
-    "semantic_hash": "9e49719a10767b731255120d30cb6332"
+    "mtime": 1791494096.8152213,
+    "seen": 1791494783.0668387,
+    "ast_hash": "3a57b8f21595f5cc9e6592998a893b26",
+    "semantic_hash": "3a57b8f21595f5cc9e6592998a893b26"
   },
   "frontend/src/main/java/com/civic/app/ui/screens/report/CreateReportScreen.kt": {
-    "mtime": 1791461570.9754894,
-    "seen": 1791464204.6044538,
-    "ast_hash": "130a4d2be6bbf961e70b25199408564b",
-    "semantic_hash": "130a4d2be6bbf961e70b25199408564b"
+    "mtime": 1791493894.2886114,
+    "seen": 1791494783.0668402,
+    "ast_hash": "524a2e4923eedcca9b2cdee76deefe99",
+    "semantic_hash": "524a2e4923eedcca9b2cdee76deefe99"
   },
   "frontend/src/main/java/com/civic/app/ui/theme/Theme.kt": {
     "mtime": 1791451629.1992147,
@@ -324,16 +324,16 @@
     "semantic_hash": "d3426ca1b661a080ab0e416ae77cd5de"
   },
   "frontend/src/main/java/com/civic/app/data/DraftStore.kt": {
-    "mtime": 1791461496.7953782,
-    "seen": 1791464204.6044328,
-    "ast_hash": "45216990ef82509e7fea8cc1519e7625",
-    "semantic_hash": "45216990ef82509e7fea8cc1519e7625"
+    "mtime": 1791493885.0999508,
+    "seen": 1791494783.066813,
+    "ast_hash": "92dea056c5687f8c765042c7bf05667c",
+    "semantic_hash": "92dea056c5687f8c765042c7bf05667c"
   },
   "frontend/src/main/java/com/civic/app/ui/Format.kt": {
-    "mtime": 1791461569.9114616,
-    "seen": 1791464204.6044426,
-    "ast_hash": "158dded4b66ef541003d852b1ff64383",
-    "semantic_hash": "158dded4b66ef541003d852b1ff64383"
+    "mtime": 1791493884.99869,
+    "seen": 1791494783.0668256,
+    "ast_hash": "1ab93afb137ebea24a3f2e7e6a71a6b1",
+    "semantic_hash": "1ab93afb137ebea24a3f2e7e6a71a6b1"
   },
   "gradlew": {
     "mtime": 1791461596.4873998,
@@ -342,21 +342,51 @@
     "semantic_hash": "f092910dfa8e47c5a37a452c3f6baf8a"
   },
   "CLAUDE.md": {
-    "mtime": 1791453078.139047,
-    "seen": 1791464204.6044695,
-    "ast_hash": "b94e51cc1721fbecb3bf539f8840d569",
-    "semantic_hash": "b94e51cc1721fbecb3bf539f8840d569"
+    "mtime": 1791464230.4919956,
+    "seen": 1791494783.0668566,
+    "ast_hash": "329a1fc834494424bd3aaf0f02952d45",
+    "semantic_hash": "329a1fc834494424bd3aaf0f02952d45"
   },
   "context.md": {
-    "mtime": 1791464083.829437,
-    "seen": 1791464204.6044707,
-    "ast_hash": "0b0ce6d6d63fecd90f24a3fdc642f9f2",
-    "semantic_hash": "0b0ce6d6d63fecd90f24a3fdc642f9f2"
+    "mtime": 1791494689.8886077,
+    "seen": 1791494783.0668578,
+    "ast_hash": "70754c01e23bf44f57577086c59a1380",
+    "semantic_hash": "70754c01e23bf44f57577086c59a1380"
   },
   "releases/README.md": {
-    "mtime": 1791464082.7654707,
-    "seen": 1791464204.604472,
-    "ast_hash": "a0378b4f7dca060a2836f712fbf48b1d",
-    "semantic_hash": "a0378b4f7dca060a2836f712fbf48b1d"
+    "mtime": 1791494658.912625,
+    "seen": 1791494783.066859,
+    "ast_hash": "33de6a0693daa6de6e086c74488c6a8b",
+    "semantic_hash": "33de6a0693daa6de6e086c74488c6a8b"
+  },
+  "frontend/src/main/java/com/civic/app/data/local/CommentDao.kt": {
+    "mtime": 1791493861.466897,
+    "seen": 1791494783.0668159,
+    "ast_hash": "b39a8aea056d4c011c8865fb40feb5c1",
+    "semantic_hash": "b39a8aea056d4c011c8865fb40feb5c1"
+  },
+  "frontend/src/main/java/com/civic/app/data/local/CommentEntity.kt": {
+    "mtime": 1791493861.4443443,
+    "seen": 1791494783.066817,
+    "ast_hash": "ca9210a8a0aa6a7f93f4b0bfea6c8aaa",
+    "semantic_hash": "ca9210a8a0aa6a7f93f4b0bfea6c8aaa"
+  },
+  "frontend/src/main/java/com/civic/app/ui/screens/detail/ReportDetailScreen.kt": {
+    "mtime": 1791494030.4941146,
+    "seen": 1791494783.0668335,
+    "ast_hash": "ccb1742c68d044de685b2f222555f6f0",
+    "semantic_hash": "ccb1742c68d044de685b2f222555f6f0"
+  },
+  "frontend/src/main/java/com/civic/app/ui/screens/detail/ReportDetailViewModel.kt": {
+    "mtime": 1791494005.628222,
+    "seen": 1791494783.0668344,
+    "ast_hash": "8a345e860079006f535b1487d6662d20",
+    "semantic_hash": "8a345e860079006f535b1487d6662d20"
+  },
+  "frontend/src/test/java/com/civic/app/FeedFilterTest.kt": {
+    "mtime": 1791494228.919707,
+    "seen": 1791494783.0668435,
+    "ast_hash": "8bf0876675b946eb027d19986e1d4957",
+    "semantic_hash": "8bf0876675b946eb027d19986e1d4957"
   }
 }

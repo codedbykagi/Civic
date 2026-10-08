@@ -15,13 +15,18 @@ android {
         applicationId = "com.civic.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // 10.0.2.2 = host machine's localhost from the Android emulator
         buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080\"")
+
+        // Walking-route servers (free FOSSGIS instances: max 1 request/s, prototype use only, not for production).
+        // Kept in build config rather than code, as FOSSGIS asks, so they can be swapped for a self-hosted server.
+        buildConfigField("String", "VALHALLA_URL", "\"https://valhalla1.openstreetmap.de/route\"")
+        buildConfigField("String", "OSRM_FOOT_URL", "\"https://routing.openstreetmap.de/routed-foot/route/v1/foot\"")
     }
 
     buildTypes {
@@ -45,6 +50,11 @@ android {
         compose = true
         buildConfig = true
     }
+}
+
+// Room writes each DB version's schema here, so future migrations can be checked against the real history.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
