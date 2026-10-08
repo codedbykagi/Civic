@@ -1,0 +1,4 @@
+<resources>
+    <!-- Window theme only; in-app styling lives in ui/theme/Theme.kt (Compose). -->
+    <style name="Theme.Civic" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

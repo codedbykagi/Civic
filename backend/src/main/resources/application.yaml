@@ -1,0 +1,17 @@
+ktor:
+  deployment:
+    port: "$PORT:8080"
+  application:
+    modules:
+      - com.civic.backend.ApplicationKt.module
+
+# Defaults to an in-memory H2 DB for local dev.
+# For Postgres (see infra/docker-compose.yml) set DATABASE_URL, DATABASE_DRIVER, DATABASE_USER, DATABASE_PASSWORD.
+database:
+  url: "$DATABASE_URL:jdbc:h2:mem:civic;DB_CLOSE_DELAY=-1"
+  driver: "$DATABASE_DRIVER:org.h2.Driver"
+  user: "$DATABASE_USER:sa"
+  password: "$DATABASE_PASSWORD:"
+
+storage:
+  uploadDir: "uploads"

@@ -1,0 +1,19 @@
+# Local Postgres for the backend. Start with:  docker compose -f infra/docker-compose.yml up -d
+# Then run the backend with:
+#   DATABASE_URL=jdbc:postgresql://localhost:5432/civic
+#   DATABASE_DRIVER=org.postgresql.Driver
+#   DATABASE_USER=civic  DATABASE_PASSWORD=civic
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: civic
+      POSTGRES_USER: civic
+      POSTGRES_PASSWORD: civic
+    ports:
+      - "5432:5432"
+    volumes:
+      - civic-db:/var/lib/postgresql/data
+
+volumes:
+  civic-db:
