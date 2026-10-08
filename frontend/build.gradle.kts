@@ -15,8 +15,8 @@ android {
         applicationId = "com.civic.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -71,6 +71,9 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
     implementation(libs.play.services.location)
+
+    // In-app map (OpenStreetMap tiles, no API key)
+    implementation(libs.osmdroid.android)
 
     // Local record of reports (offline drafts / history)
     implementation(libs.androidx.room.runtime)

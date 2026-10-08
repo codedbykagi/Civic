@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.civic.app.ui.screens.feed.FeedViewModel
 import com.civic.shared.model.IssueCategory
+import com.civic.shared.model.IssueStatus
 
 /** Prototype profile: stats about your reports. TODO: login/sign-up, user info. */
 @Composable
@@ -27,6 +28,7 @@ fun ProfileScreen(viewModel: FeedViewModel = viewModel(factory = FeedViewModel.F
         HorizontalDivider()
         Text("Reports submitted: ${list.size}", style = MaterialTheme.typography.titleMedium)
         Text("Total upvotes: ${list.sumOf { it.upvotes }}")
+        Text("Resolved: ${list.count { it.status == IssueStatus.RESOLVED.name }}")
         HorizontalDivider()
         IssueCategory.entries.forEach { c ->
             val count = list.count { it.category == c.name }

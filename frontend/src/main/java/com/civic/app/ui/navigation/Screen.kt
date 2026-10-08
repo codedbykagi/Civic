@@ -16,6 +16,11 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector?
     /** Not in the bottom bar: reached after taking a photo. */
     data object CreateReport : Screen("create_report", "New report")
 
+    /** Not in the bottom bar: opened from a feed card or a map pin. */
+    data object ReportDetail : Screen("report/{id}", "Report") {
+        fun route(id: Long) = "report/$id"
+    }
+
     companion object {
         val bottomBarItems = listOf(Feed, Map, Capture, Profile)
     }

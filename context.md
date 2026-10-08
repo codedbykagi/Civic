@@ -6,26 +6,35 @@ Kept short on purpose. For code details, query the graph (see CLAUDE.md) instead
 A social-style Android app for reporting local issues (potholes, small fires, fallen trees, etc.).
 A user takes a photo; the app tags it with GPS location and time, saves a record on the device, and posts it to a public feed.
 
-## Status (as of 2026-10-08)
-- **Prototype APK built:** `releases/Civic-v0.1.0-prototype.apk` (debug-signed). Install steps are in `releases/README.md`.
-- **What the prototype does:** it works offline, with everything stored in Room on the phone.
+## Status (as of 2026-10-09)
+- **Prototype APK built:** `releases/Civic-v0.2.0-prototype.apk` (debug-signed, versionCode 2). Install steps are in `releases/README.md`.
+- **What the prototype does:** it works offline, with everything stored in Room on the phone (DB v2).
   - CameraX capture, tagged with GPS (fresh fix, falling back to last known position) and the time
   - Post form: category chips + description
-  - Feed: photo, location, time, upvote, open in Maps, delete
-  - Map tab: list of located reports; tap opens Google Maps
-  - Profile: report counts
-- **Not wired yet:** backend sync, auth, comments, a real map.
+  - Feed: photo, status badge, location, time, upvote, open in Maps, delete (confirmed). Status and category filter chips (DAO query `observeFiltered`).
+  - Report detail (`report/{id}`): status chips (Reported → Resolved) and comments (`CommentEntity`, author "Guest", deleted along with the report via cascade).
+  - Map tab: osmdroid / OpenStreetMap with a pin per report. Tapping a pin shows a card (View report / Directions). Pins at the same spot overlap.
+  - Profile: report counts, plus a resolved count
+- **DB migrations:** `CivicDatabase.MIGRATION_1_2` adds `reports.status` and the `comments` table. `fallbackToDestructiveMigration` was removed so user data is never wiped; every future schema change needs a Migration. Verified on the emulator: upgrading from 0.1.0 kept all reports.
+- **Bug fixes (0.2.0):**
+  - Maps intent no longer crashes when no maps app is installed.
+  - The GPS task resumes when cancelled, and the last-known lookup has a timeout.
+  - A camera bind failure shows a toast instead of crashing.
+  - A failed save re-enables the Post button.
+  - Abandoned draft photos are deleted.
+  - After a permission denial, the button opens Settings.
+  - Lint is clean.
+- **Not wired yet:** backend sync, auth.
 - **Build environment:**
   - Android Studio 2026.2 is installed. SDK is at `%LOCALAPPDATA%\Android\Sdk`; API 35 and build-tools 34 were auto-installed by AGP.
-  - Build with `JAVA_HOME=C:\Users\ar0hu\.jdks\jbr-21.0.11` and `.\gradlew.bat :frontend:assembleDebug`. The APK lands in `frontend/build/outputs/apk/debug/`; copy it into `releases/`.
+  - Build with `JAVA_HOME=C:\Users\ar0hu\.jdks\jbr-21.0.11` and `.\gradlew.bat :frontend:assembleDebug`. In Git Bash with `MSYS_NO_PATHCONV=1` (which adb needs), JAVA_HOME must use the Windows form `C:\...`, otherwise gradlew fails. The APK lands in `frontend/build/outputs/apk/debug/`; copy it into `releases/`.
   - The Gradle wrapper is now generated. Modules target Java 17 bytecode via `jvmTarget`; there's no toolchain, because no JDK 17 is installed.
-- **Not set up yet:** git repo.
 - **Deleted:** the original empty `Test.txt`.
 
 ## Layout (one Gradle build, three modules)
 | Module | Stack | Status |
 |---|---|---|
-| `frontend/` (package `com.civic.app`) | Android app: Jetpack Compose, Room, Ktor client, CameraX, Fused Location | The feed screen works (loading, error and list states). Capture, CreateReport, Map and Profile are placeholder screens. |
+| `frontend/` (package `com.civic.app`) | Android app: Jetpack Compose, Room, Ktor client, CameraX, Fused Location | All screens work offline (Room). Screens: Feed, Map, Capture, CreateReport, ReportDetail, Profile. |
 | `backend/` (package `com.civic.backend`) | Ktor 3 server, Exposed, H2 (dev) / Postgres | GET feed, GET one report and POST report work, but data is kept in memory. `/media` and `/users` are stubs. DB tables are defined. |
 | `shared/` (package `com.civic.shared`) | Plain Kotlin + kotlinx.serialization | Models: `Report`, `CreateReportRequest`, `User`, `Comment`, `GeoLocation`, `IssueCategory`, `IssueStatus`. `ApiRoutes` holds the endpoint paths. |
 | `infra/` | docker-compose | Local Postgres 16 |
@@ -40,16 +49,17 @@ A user takes a photo; the app tags it with GPS location and time, saves a record
 - **Database config:** `backend/src/main/resources/application.yaml`. It defaults to H2; the `DATABASE_*` environment variables switch it to Postgres.
 
 ## Next TODOs (marked with `TODO` in code)
-1. CameraX preview and capture in `CaptureScreen`; record GPS and time when the photo is taken
-2. CreateReport form (category, description), saved to Room first, then uploaded
+1. Upload pending reports (WorkManager `syncPending()`)
+2. Reverse-geocode coordinates to an address
 3. Image upload endpoint (`/api/v1/media`)
 4. JWT auth and users
 5. Exposed-backed repository to replace the in-memory one
-6. Upvotes, comments, nearby query, map view
+6. Sync comments and status to the backend; nearby query; cluster overlapping map pins
 
 ## graphify (knowledge graph)
 - **Built** 2026-10-08: 295 nodes, 479 edges, 18 communities. Cost: ~52k tokens, all spent reading the 5 doc files; code extraction is free.
 - **Updated** 2026-10-08 with `/graphify . --update` after the prototype work: now 379 nodes, 671 edges, 27 communities. 9 edges loop back to their own node; nothing points to a missing node. This run cost ~3.5k tokens because the 3 changed docs were extracted inline, without a subagent. Most-connected nodes now: `ReportEntity`, `Report`, `IssueCategory`, `FeedViewModel`.
+- **Updated** 2026-10-09 (v0.2.0 work): 494 nodes, 989 edges, 26 communities, 15 self-loops, nothing dangling. The 3 changed docs were extracted inline. Most-connected nodes: `ReportEntity`, `Report`, `FeedViewModel`, `ReportRepository`, `CommentEntity`.
 - **Outputs:** `graphify-out/graph.html` (visual), `GRAPH_REPORT.md`, `graph.json`, plus a cache and a manifest so updates only re-process what changed.
 - **Most-connected nodes:** `Report`, `PlaceholderScreen()`, `IssueCategory`, `ReportEntity`, `ReportService`.
 - **Health warning:** 123 edges point to symbols outside this project (mostly library calls) and 5 edges loop back to their own node. Harmless.

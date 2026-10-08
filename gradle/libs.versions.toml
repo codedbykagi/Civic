@@ -15,6 +15,7 @@ camerax = "1.4.1"
 playServicesLocation = "21.3.0"
 room = "2.6.1"
 coil = "2.7.0"
+osmdroid = "6.1.20"
 # Backend
 ktor = "3.0.3"
 exposed = "0.57.0"
@@ -49,6 +50,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
 
 # Ktor client (Android -> backend)
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

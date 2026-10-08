@@ -1,5 +1,6 @@
 package com.civic.app.ui.screens.report
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -87,18 +88,24 @@ fun CreateReportScreen(onPosted: () -> Unit) {
             onClick = {
                 saving = true
                 scope.launch {
-                    container.reportRepository.addReport(
-                        ReportEntity(
-                            category = category.name,
-                            description = description.trim(),
-                            localImagePath = draft.photoPath,
-                            latitude = draft.location?.latitude,
-                            longitude = draft.location?.longitude,
-                            capturedAt = draft.capturedAt,
-                        ),
-                    )
-                    container.draftStore.current = null
-                    onPosted()
+                    try {
+                        container.reportRepository.addReport(
+                            ReportEntity(
+                                category = category.name,
+                                description = description.trim(),
+                                localImagePath = draft.photoPath,
+                                latitude = draft.location?.latitude,
+                                longitude = draft.location?.longitude,
+                                capturedAt = draft.capturedAt,
+                            ),
+                        )
+                        container.draftStore.clear()
+                        onPosted()
+                    } catch (e: Exception) {
+                        // Re-enable the button so the user can retry instead of being stuck.
+                        saving = false
+                        Toast.makeText(context, "Couldn't save report: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
                 }
             },
         ) { Text("Post") }

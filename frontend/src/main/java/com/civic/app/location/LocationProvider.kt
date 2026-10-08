@@ -6,6 +6,7 @@ import android.location.Location
 import com.civic.shared.model.GeoLocation
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
@@ -19,16 +20,19 @@ class LocationProvider(context: Context) {
     /** Fresh fix if possible (up to [timeoutMs]), else last known position. Caller must hold location permission. */
     @SuppressLint("MissingPermission")
     suspend fun currentLocation(timeoutMs: Long = 8_000): GeoLocation? {
+        val cancel = CancellationTokenSource()
         val fresh = withTimeoutOrNull(timeoutMs) {
-            client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).awaitOrNull()
+            client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancel.token).awaitOrNull()
         }
-        val location = fresh ?: client.lastLocation.awaitOrNull()
+        if (fresh == null) cancel.cancel() // stop the GPS request we gave up on
+        val location = fresh ?: withTimeoutOrNull(2_000) { client.lastLocation.awaitOrNull() }
         return location?.let { GeoLocation(it.latitude, it.longitude) }
     }
 
     private suspend fun Task<Location>.awaitOrNull(): Location? = suspendCancellableCoroutine { cont ->
         addOnSuccessListener { cont.resume(it) }
         addOnFailureListener { cont.resume(null) }
+        addOnCanceledListener { cont.resume(null) } // otherwise a cancelled task never resumes
     }
 
     // TODO: reverse-geocode to a readable address (android.location.Geocoder)

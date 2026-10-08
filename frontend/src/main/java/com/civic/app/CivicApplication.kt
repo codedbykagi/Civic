@@ -24,11 +24,11 @@ class CivicApplication : Application() {
 /** Simple manual dependency container. Swap for Hilt/Koin if the app grows. */
 class AppContainer(application: Application) {
     private val database = Room.databaseBuilder(application, CivicDatabase::class.java, "civic.db")
-        .fallbackToDestructiveMigration()
+        .addMigrations(CivicDatabase.MIGRATION_1_2)
         .build()
     private val reportApi by lazy { ReportApi(ApiClient.httpClient) }
 
-    val reportRepository = ReportRepository(reportApi, database.reportDao())
+    val reportRepository = ReportRepository(reportApi, database.reportDao(), database.commentDao())
     val locationProvider = LocationProvider(application)
     val draftStore = DraftStore()
 }

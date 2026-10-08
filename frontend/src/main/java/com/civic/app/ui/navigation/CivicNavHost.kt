@@ -1,5 +1,6 @@
 package com.civic.app.ui.navigation
 
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -10,11 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.civic.app.ui.screens.capture.CaptureScreen
+import com.civic.app.ui.screens.detail.ReportDetailScreen
+import com.civic.app.ui.screens.detail.ReportDetailViewModel
 import com.civic.app.ui.screens.feed.FeedScreen
 import com.civic.app.ui.screens.map.MapScreen
 import com.civic.app.ui.screens.profile.ProfileScreen
@@ -49,10 +54,18 @@ fun CivicNavHost() {
         NavHost(
             navController = navController,
             startDestination = Screen.Feed.route,
-            modifier = Modifier.padding(innerPadding),
+            // consumeWindowInsets so imePadding() inside screens doesn't double-count the bottom bar.
+            modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
         ) {
-            composable(Screen.Feed.route) { FeedScreen() }
-            composable(Screen.Map.route) { MapScreen() }
+            val openReport: (Long) -> Unit = { id -> navController.navigate(Screen.ReportDetail.route(id)) }
+            composable(Screen.Feed.route) { FeedScreen(onOpenReport = openReport) }
+            composable(Screen.Map.route) { MapScreen(onOpenReport = openReport) }
+            composable(
+                Screen.ReportDetail.route,
+                arguments = listOf(navArgument(ReportDetailViewModel.ARG_ID) { type = NavType.LongType }),
+            ) {
+                ReportDetailScreen(onBack = { navController.popBackStack() })
+            }
             composable(Screen.Capture.route) {
                 CaptureScreen(onPhotoCaptured = { navController.navigate(Screen.CreateReport.route) })
             }

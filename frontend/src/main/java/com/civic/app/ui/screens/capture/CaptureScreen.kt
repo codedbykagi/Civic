@@ -32,14 +32,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.civic.app.appContainer
 import com.civic.app.camera.PhotoStorage
 import com.civic.app.data.Draft
 import com.civic.app.ui.components.PlaceholderScreen
+import com.civic.app.ui.openAppSettings
 import kotlinx.coroutines.launch
 
 private val REQUIRED_PERMISSIONS = arrayOf(
@@ -55,8 +57,15 @@ fun CaptureScreen(onPhotoCaptured: () -> Unit) {
     fun granted(p: String) = ContextCompat.checkSelfPermission(context, p) == PackageManager.PERMISSION_GRANTED
 
     var hasCamera by remember { mutableStateOf(granted(Manifest.permission.CAMERA)) }
+    var askedOnce by remember { mutableStateOf(false) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         hasCamera = granted(Manifest.permission.CAMERA)
+        askedOnce = true
+    }
+    // Re-check when returning from system settings.
+    LifecycleResumeEffect(Unit) {
+        hasCamera = granted(Manifest.permission.CAMERA)
+        onPauseOrDispose {}
     }
     LaunchedEffect(Unit) {
         if (REQUIRED_PERMISSIONS.any { !granted(it) }) launcher.launch(REQUIRED_PERMISSIONS)
@@ -64,7 +73,12 @@ fun CaptureScreen(onPhotoCaptured: () -> Unit) {
 
     if (!hasCamera) {
         PlaceholderScreen("Camera permission needed", "Civic needs the camera to photograph issues.") {
-            Button(onClick = { launcher.launch(REQUIRED_PERMISSIONS) }) { Text("Grant permission") }
+            // After a denial Android may stop showing the dialog, so offer system settings instead.
+            if (askedOnce) {
+                Button(onClick = { openAppSettings(context) }) { Text("Open settings") }
+            } else {
+                Button(onClick = { launcher.launch(REQUIRED_PERMISSIONS) }) { Text("Grant permission") }
+            }
         }
         return
     }
@@ -91,8 +105,12 @@ private fun CameraPreview(onPhotoCaptured: () -> Unit) {
                 providerFuture.addListener({
                     val provider = providerFuture.get()
                     val preview = Preview.Builder().build().also { it.setSurfaceProvider(previewView.surfaceProvider) }
-                    provider.unbindAll()
-                    provider.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageCapture)
+                    try {
+                        provider.unbindAll()
+                        provider.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageCapture)
+                    } catch (e: Exception) { // e.g. no back camera, or camera in use
+                        Toast.makeText(ctx, "Camera unavailable: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
                 }, ContextCompat.getMainExecutor(ctx))
                 previewView
             },
@@ -113,7 +131,7 @@ private fun CameraPreview(onPhotoCaptured: () -> Unit) {
                             scope.launch {
                                 val container = context.appContainer
                                 val location = runCatching { container.locationProvider.currentLocation() }.getOrNull()
-                                container.draftStore.current = Draft(file.absolutePath, location, capturedAt)
+                                container.draftStore.replace(Draft(file.absolutePath, location, capturedAt))
                                 busy = false
                                 onPhotoCaptured()
                             }
