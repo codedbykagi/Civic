@@ -46,7 +46,7 @@ fun ReportHubScreen(
             Text(
                 stringResource(R.string.app_tagline),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
