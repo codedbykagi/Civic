@@ -67,25 +67,13 @@ fun ReportCard(
     val categoryName = categoryName(report.category)
     var confirmDelete by remember { mutableStateOf(false) }
 
-<<<<<<< HEAD
     Card(
         onClick = onOpen,
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
-        report.localImagePath?.let { path ->
-            AsyncImage(
-                model = File(path),
-                contentDescription = categoryName,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth().height(220.dp),
-            )
-        }
-=======
-    Card(onClick = onOpen, modifier = modifier.fillMaxWidth()) {
         ReportPhotoStrip(report, categoryName)
->>>>>>> remotes/origin/Basic_func
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             AuthorLine(report, syncIsPossible)
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {

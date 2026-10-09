@@ -67,7 +67,7 @@ A user takes a photo; the app tags it with GPS location and time, saves a record
   - The Gradle wrapper is now generated. Modules target Java 17 bytecode via `jvmTarget`; there's no toolchain, because no JDK 17 is installed.
 - **Deleted:** the original empty `Test.txt`.
 
-## UI revamp (2026-10-09, branch `UI`, uncommitted)
+## UI revamp (2026-10-09, merged into `master` with v0.4.0 accounts)
 - Dark by default: true black + white + oxblood red `#A4161A`. Light: white + black + signal red `#E10600`. Tokens, type scale (heavy tight headings) and shapes live in `ui/theme/Theme.kt`.
 - `ui/components/CivicHeader.kt`: header on the 4 main tabs (wordmark + red pin dot) with `ThemeSlideSwitch` at top right. The choice is saved in SharedPreferences (`ThemePreference`), and the status-bar icons follow it (`MainActivity`).
 - Red nav indicator. Status badges: Reported = red, Resolved = inverse. Report cards are flat with an outline. The Feed shows no duplicate "Civic" title.
@@ -106,7 +106,8 @@ A user takes a photo; the app tags it with GPS location and time, saves a record
 - **Built** 2026-10-08: 295 nodes, 479 edges, 18 communities. Cost: ~52k tokens, all spent reading the 5 doc files; code extraction is free.
 - **Updated** 2026-10-08 with `/graphify . --update` after the prototype work: now 379 nodes, 671 edges, 27 communities. 9 edges loop back to their own node; nothing points to a missing node. This run cost ~3.5k tokens because the 3 changed docs were extracted inline, without a subagent. Most-connected nodes now: `ReportEntity`, `Report`, `IssueCategory`, `FeedViewModel`.
 - **Updated** 2026-10-09 (v0.2.0 work): 494 nodes, 989 edges, 26 communities, 15 self-loops, nothing dangling. The 3 changed docs were extracted inline. Most-connected nodes: `ReportEntity`, `Report`, `FeedViewModel`, `ReportRepository`, `CommentEntity`.
-- **Updated** 2026-10-09 (UI revamp): 1125 nodes, 2998 edges, 63 communities. Only `context.md` was extracted, inline. A new `.graphifyignore` skips `.agents/`, `.claude/`, `.archify/` and `skills-lock.json`.
+- **Updated** 2026-10-09 (merge fix): the graph was taken from the `Basic_Func` side, then `graphify update .` was run (1419 nodes). The UI revamp notes in this file aren't semantically extracted yet. `.graphifyignore` skips `.agents/`, `.claude/`, `.archify/`, `graphify-out/` and `/civic/` (anchored, so `com/civic/` stays indexed).
+- **Merge fix** 2026-10-09: the `master` merge of `UI` + `origin/Basic_Func` had committed conflict markers (ReportCard, CivicNavHost, FeedScreen, `.graphifyignore`, graphify-out) and a nested clone `civic/` as an embedded repo. Both are fixed: the theme switch now passes through `SignedInApp`. The `civic/` folder is untracked and ignored, and is safe to delete.
 - **Outputs:** `graphify-out/graph.html` (visual), `GRAPH_REPORT.md`, `graph.json`, plus a cache and a manifest so updates only re-process what changed.
 - **Most-connected nodes:** `Report`, `PlaceholderScreen()`, `IssueCategory`, `ReportEntity`, `ReportService`.
 - **Health warning:** 123 edges point to symbols outside this project (mostly library calls) and 5 edges loop back to their own node. Harmless.

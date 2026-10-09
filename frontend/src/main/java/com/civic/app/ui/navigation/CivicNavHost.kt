@@ -80,15 +80,12 @@ private data class QuickReportVisuals(
  * [onPendingQuickReportHandled] clears it.
  */
 @Composable
-<<<<<<< HEAD
 fun CivicNavHost(
     pendingQuickReport: IssueCategory? = null,
     onPendingQuickReportHandled: () -> Unit = {},
     darkTheme: Boolean = true,
     onDarkThemeChange: (Boolean) -> Unit = {},
 ) {
-=======
-fun CivicNavHost(pendingQuickReport: IssueCategory? = null, onPendingQuickReportHandled: () -> Unit = {}) {
     val authState by LocalContext.current.appContainer.authRepository.state.collectAsState()
     when (authState) {
         // Don't build the app graph until the stored identity is known, or the feed flashes before onboarding.
@@ -97,7 +94,7 @@ fun CivicNavHost(pendingQuickReport: IssueCategory? = null, onPendingQuickReport
         }
         // No Scaffold, no bottom bar: there is nothing to navigate to until the user has an identity.
         AuthState.NeedsOnboarding -> AuthFlow()
-        is AuthState.Active -> SignedInApp(pendingQuickReport, onPendingQuickReportHandled)
+        is AuthState.Active -> SignedInApp(pendingQuickReport, onPendingQuickReportHandled, darkTheme, onDarkThemeChange)
     }
 }
 
@@ -143,8 +140,12 @@ private fun AuthFlow() {
 }
 
 @Composable
-private fun SignedInApp(pendingQuickReport: IssueCategory?, onPendingQuickReportHandled: () -> Unit) {
->>>>>>> remotes/origin/Basic_func
+private fun SignedInApp(
+    pendingQuickReport: IssueCategory?,
+    onPendingQuickReportHandled: () -> Unit,
+    darkTheme: Boolean,
+    onDarkThemeChange: (Boolean) -> Unit,
+) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route

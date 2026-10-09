@@ -21,3 +21,6 @@ captures/
 # Backend runtime data
 backend/uploads/
 *.env
+
+# Stray nested clone of this repo; never commit it as an embedded repo
+/civic/

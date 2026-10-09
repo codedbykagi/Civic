@@ -1,14 +1,10 @@
-<<<<<<< HEAD
-.agents/
-.claude/
-.archify/
-skills-lock.json
-=======
 # Generated artifacts and vendored skill copies: they are not this project's source,
 # and the 760 KB archify HTML export in particular costs real tokens to re-extract.
 .archify/
 .agents/
-.claude/skills/
+.claude/
+skills-lock.json
 graphify-out/
 releases/*.apk
->>>>>>> remotes/origin/Basic_func
+# Stray nested clone of this repo (see .gitignore)
+/civic/

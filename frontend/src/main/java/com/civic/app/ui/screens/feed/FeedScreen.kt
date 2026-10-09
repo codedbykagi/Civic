@@ -65,26 +65,17 @@ fun FeedScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
-<<<<<<< HEAD
-            // The header above already shows the wordmark, so the feed opens with the tagline.
-            Text(
-                stringResource(R.string.app_tagline),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-=======
+            // The header above already shows the wordmark, so the feed opens with the tagline (+ sync control).
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(Modifier.weight(1f)) {
-                    Text("Civic", style = MaterialTheme.typography.headlineSmall)
-                    Text(
-                        stringResource(R.string.app_tagline),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+                Text(
+                    stringResource(R.string.app_tagline),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
                 if (canSync) {
                     if (syncStatus is SyncStatus.Running) {
                         CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
@@ -98,7 +89,6 @@ fun FeedScreen(
             (syncStatus as? SyncStatus.Failed)?.let {
                 Text(it.message, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
             }
->>>>>>> remotes/origin/Basic_func
         }
         item { QuickUnsafePanel(onReport = quickReport, compact = true) }
         if (list.isEmpty() && !filter.isActive) {
