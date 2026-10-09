@@ -1,12 +1,16 @@
 package com.civic.app.ui.navigation
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -17,9 +21,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -33,9 +41,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.civic.app.appContainer
 import com.civic.app.data.Draft
+import com.civic.app.data.auth.AuthState
 import com.civic.app.safety.QuickReportEvent
 import com.civic.app.ui.components.LocalAppSnackbarHost
 import com.civic.app.ui.components.rememberQuickReportAction
+import com.civic.app.ui.screens.auth.SignInScreen
+import com.civic.app.ui.screens.auth.SignUpScreen
+import com.civic.app.ui.screens.auth.WelcomeScreen
 import com.civic.app.ui.screens.capture.CaptureScreen
 import com.civic.app.ui.screens.detail.ReportDetailScreen
 import com.civic.app.ui.screens.detail.ReportDetailViewModel
@@ -66,6 +78,61 @@ private data class QuickReportVisuals(
  */
 @Composable
 fun CivicNavHost(pendingQuickReport: IssueCategory? = null, onPendingQuickReportHandled: () -> Unit = {}) {
+    val authState by LocalContext.current.appContainer.authRepository.state.collectAsState()
+    when (authState) {
+        // Don't build the app graph until the stored identity is known, or the feed flashes before onboarding.
+        AuthState.Loading -> Surface(Modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+        }
+        // No Scaffold, no bottom bar: there is nothing to navigate to until the user has an identity.
+        AuthState.NeedsOnboarding -> AuthFlow()
+        is AuthState.Active -> SignedInApp(pendingQuickReport, onPendingQuickReportHandled)
+    }
+}
+
+/** Onboarding, in its own graph so a back press inside it can never reach the app. */
+@Composable
+private fun AuthFlow() {
+    val navController = rememberNavController()
+    // Survives the Sign up → Sign in hop; each destination has its own AuthViewModel, so its state would not.
+    var confirmationNotice by remember { mutableStateOf<String?>(null) }
+    // Nothing calls back on success: the repository flips to Active and this whole flow leaves the tree.
+    val backToWelcome: () -> Unit = { navController.popBackStack(Screen.Welcome.route, inclusive = false) }
+    // Surface, not Scaffold: these screens need the theme background but no app bars.
+    Surface(Modifier.fillMaxSize()) {
+        NavHost(navController = navController, startDestination = Screen.Welcome.route) {
+            composable(Screen.Welcome.route) {
+                WelcomeScreen(
+                    onSignedIn = {},
+                    onSignIn = { navController.navigate(Screen.SignIn.route) },
+                    onSignUp = { navController.navigate(Screen.SignUp.route) },
+                )
+            }
+            composable(Screen.SignIn.route) {
+                SignInScreen(
+                    onBack = backToWelcome,
+                    onSignedIn = {},
+                    onSignUp = { navController.navigate(Screen.SignUp.route) },
+                    incomingNotice = confirmationNotice,
+                )
+            }
+            composable(Screen.SignUp.route) {
+                SignUpScreen(
+                    onBack = backToWelcome,
+                    onSignedIn = {},
+                    onSignIn = { navController.navigate(Screen.SignIn.route) },
+                    onNeedsConfirmation = { email ->
+                        confirmationNotice = "Check $email for a confirmation link, then sign in."
+                        navController.navigate(Screen.SignIn.route)
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SignedInApp(pendingQuickReport: IssueCategory?, onPendingQuickReportHandled: () -> Unit) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -73,6 +140,8 @@ fun CivicNavHost(pendingQuickReport: IssueCategory? = null, onPendingQuickReport
     val snackbarHost = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val quickReport = rememberQuickReportAction()
+    // Hoisted for the same reason as in AuthFlow: it has to outlive the Sign up destination.
+    var confirmationNotice by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(pendingQuickReport) {
         pendingQuickReport ?: return@LaunchedEffect
@@ -220,7 +289,36 @@ fun CivicNavHost(pendingQuickReport: IssueCategory? = null, onPendingQuickReport
                 composable(Screen.SafetyReports.route) {
                     SafetyReportsScreen(onBack = { navController.popBackStack() }, onOpenReport = openReport)
                 }
-                composable(Screen.Profile.route) { ProfileScreen(onMySafetyReports = openSafetyReports) }
+                composable(Screen.Profile.route) {
+                    ProfileScreen(
+                        onMySafetyReports = { navController.navigate(Screen.SafetyReports.route) },
+                        onSignIn = { navController.navigate(Screen.SignIn.route) },
+                        onSignUp = { navController.navigate(Screen.SignUp.route) },
+                    )
+                }
+                // Also in the main graph: someone using the app on a device profile can sign in from Profile.
+                composable(Screen.SignIn.route) {
+                    SignInScreen(
+                        onBack = { navController.popBackStack() },
+                        onSignedIn = { navController.popBackStack() },
+                        onSignUp = { navController.navigate(Screen.SignUp.route) },
+                        incomingNotice = confirmationNotice,
+                        // The user already has an identity here; creating one would rename them to "Neighbour".
+                        onSkip = { navController.popBackStack() },
+                    )
+                }
+                composable(Screen.SignUp.route) {
+                    SignUpScreen(
+                        onBack = { navController.popBackStack() },
+                        onSignedIn = { navController.popBackStack() },
+                        onSignIn = { navController.navigate(Screen.SignIn.route) },
+                        onNeedsConfirmation = { email ->
+                            confirmationNotice = "Check $email for a confirmation link, then sign in."
+                            navController.navigate(Screen.SignIn.route)
+                        },
+                        onSkip = { navController.popBackStack() },
+                    )
+                }
             }
         }
     }

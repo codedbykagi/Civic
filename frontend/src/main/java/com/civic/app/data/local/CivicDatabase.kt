@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [ReportEntity::class, CommentEntity::class], version = 3, exportSchema = true)
+@Database(entities = [ReportEntity::class, CommentEntity::class], version = 4, exportSchema = true)
 abstract class CivicDatabase : RoomDatabase() {
     abstract fun reportDao(): ReportDao
     abstract fun commentDao(): CommentDao
@@ -51,6 +51,36 @@ abstract class CivicDatabase : RoomDatabase() {
             }
         }
 
-        val ALL_MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
+        /**
+         * v4: accounts. Reports and comments gain an author, reports gain a remote photo URL, a public/private
+         * visibility flag and a per-user upvote flag; comments gain sync state. All additive, so existing rows
+         * survive — a report written before accounts existed simply has a null author and shows as "Unknown".
+         *
+         * The unique index on reports.remoteId is what makes pulling the shared feed idempotent. SQLite treats
+         * NULLs as distinct in a unique index, so the many not-yet-synced local reports do not collide.
+         */
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE reports ADD COLUMN authorId TEXT")
+                db.execSQL("ALTER TABLE reports ADD COLUMN authorName TEXT")
+                db.execSQL("ALTER TABLE reports ADD COLUMN authorAvatar TEXT")
+                db.execSQL("ALTER TABLE reports ADD COLUMN imageUrl TEXT")
+                db.execSQL("ALTER TABLE reports ADD COLUMN visibility TEXT NOT NULL DEFAULT 'public'")
+                db.execSQL("ALTER TABLE reports ADD COLUMN upvotedByMe INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_reports_remoteId ON reports (remoteId)")
+                db.execSQL("ALTER TABLE comments ADD COLUMN authorId TEXT")
+                db.execSQL("ALTER TABLE comments ADD COLUMN authorAvatar TEXT")
+                db.execSQL("ALTER TABLE comments ADD COLUMN remoteId TEXT")
+                db.execSQL("ALTER TABLE comments ADD COLUMN isSynced INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_comments_remoteId ON comments (remoteId)")
+                // Safety reports were always author-private; mark them so the server's RLS keeps them that way.
+                db.execSQL(
+                    "UPDATE reports SET visibility = 'private' WHERE category IN " +
+                        "('UNSAFE_WOMEN', 'UNSAFE_CHILDREN', 'UNSAFE_GENERAL')",
+                )
+            }
+        }
+
+        val ALL_MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
     }
 }

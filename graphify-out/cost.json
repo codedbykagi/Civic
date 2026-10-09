@@ -18,8 +18,14 @@
       "output_tokens": 0,
       "files": 26,
       "note": "docs extracted inline (no subagent)"
+    },
+    {
+      "date": "2026-10-09T11:10:06.131274+00:00",
+      "input_tokens": 24000,
+      "output_tokens": 2100,
+      "files": 102
     }
   ],
-  "total_input_tokens": 51861,
-  "total_output_tokens": 3500
+  "total_input_tokens": 75861,
+  "total_output_tokens": 5600
 }

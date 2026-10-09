@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.NoPhotography
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,10 +65,13 @@ import com.civic.app.safety.effectiveTimeOfDay
 import com.civic.app.safety.isSafety
 import com.civic.app.safety.issueCategory
 import com.civic.app.ui.categoryName
+import com.civic.app.ui.components.Avatar
 import com.civic.app.ui.components.PlaceholderScreen
 import com.civic.app.ui.components.SafetyTagPicker
 import com.civic.app.ui.components.StatusBadge
 import com.civic.app.ui.components.TimeOfDayPicker
+import com.civic.app.ui.components.initialsOf
+import com.civic.app.ui.components.relativeTime
 import com.civic.app.ui.components.safetyIcon
 import com.civic.app.ui.components.zoneColor
 import com.civic.app.ui.displayName
@@ -93,6 +98,10 @@ fun ReportDetailScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val comments by viewModel.comments.collectAsState()
+    val account by viewModel.account.collectAsState()
+
+    // Other people's comments only exist on the server; pull them once when the report is opened.
+    LaunchedEffect(Unit) { viewModel.syncComments() }
 
     Column(Modifier.fillMaxSize()) {
         TopAppBar(
@@ -120,6 +129,7 @@ fun ReportDetailScreen(
                     onSetStatus = viewModel::setStatus,
                     onAddPhoto = { onAddPhoto(s.report.localId) },
                     onSendComment = viewModel::addComment,
+                    canComment = account != null,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -135,6 +145,7 @@ private fun CivicReportDetail(
     onSetStatus: (IssueStatus) -> Unit,
     onAddPhoto: () -> Unit,
     onSendComment: (String) -> Unit,
+    canComment: Boolean,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -156,14 +167,16 @@ private fun CivicReportDetail(
         }
         items(comments, key = { it.id }) { CommentRow(it) }
     }
-    CommentInput(onSend = onSendComment)
+    CommentInput(onSend = onSendComment, enabled = canComment)
 }
 
 @Composable
-private fun ReportPhoto(path: String?, description: String, onAddPhoto: () -> Unit) {
-    if (path != null) {
+private fun ReportPhoto(report: ReportEntity, description: String, onAddPhoto: () -> Unit) {
+    // Own file first, then the server copy: a report pulled from the feed has no file on this phone.
+    val model: Any? = report.localImagePath?.let { File(it) } ?: report.imageUrl
+    if (model != null) {
         AsyncImage(
-            model = File(path),
+            model = model,
             contentDescription = description,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxWidth().height(240.dp),
@@ -201,7 +214,8 @@ private fun CivicHeader(
     val status = statusOf(report.status)
 
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        ReportPhoto(report.localImagePath, name, onAddPhoto)
+        ReportPhoto(report, name, onAddPhoto)
+        AuthorLine(report)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(name, style = MaterialTheme.typography.titleLarge)
             StatusBadge(status)
@@ -214,7 +228,10 @@ private fun CivicHeader(
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
             TextButton(onClick = onUpvote) {
-                Icon(Icons.Filled.ThumbUp, contentDescription = "Upvote")
+                Icon(
+                    if (report.upvotedByMe) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
+                    contentDescription = if (report.upvotedByMe) "Remove upvote" else "Upvote",
+                )
                 Text("  ${report.upvotes}")
             }
             if (report.latitude != null && report.longitude != null) {
@@ -276,7 +293,7 @@ private fun SafetyReportDetail(
             Icon(Icons.Filled.Edit, contentDescription = null)
             Text("  Add or edit details")
         }
-        ReportPhoto(report.localImagePath, category.displayName, onAddPhoto)
+        ReportPhoto(report, category.displayName, onAddPhoto)
         Text(
             "Photos are optional. Avoid capturing people's faces, especially children's.",
             style = MaterialTheme.typography.bodySmall,
@@ -369,16 +386,35 @@ private fun EditSafetyDetailsDialog(
     )
 }
 
+/** Who wrote the report, shown the same way as in the feed card. */
 @Composable
-private fun CommentRow(comment: CommentEntity) {
-    Column {
-        Text("${comment.author} · ${formatTime(comment.createdAt)}", style = MaterialTheme.typography.labelSmall)
-        Text(comment.text, style = MaterialTheme.typography.bodyMedium)
+private fun AuthorLine(report: ReportEntity) {
+    val name = report.authorName ?: "Unknown" // reports written before accounts existed have no author
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Avatar(report.authorAvatar, initialsOf(name), size = 32.dp)
+        Column {
+            Text(name, style = MaterialTheme.typography.labelLarge)
+            Text(relativeTime(report.capturedAt), style = MaterialTheme.typography.labelSmall)
+        }
     }
 }
 
 @Composable
-private fun CommentInput(onSend: (String) -> Unit) {
+private fun CommentRow(comment: CommentEntity) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Avatar(comment.authorAvatar, initialsOf(comment.author), size = 32.dp)
+        Column {
+            Text(
+                "${comment.author} · ${relativeTime(comment.createdAt)}",
+                style = MaterialTheme.typography.labelSmall,
+            )
+            Text(comment.text, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+@Composable
+private fun CommentInput(onSend: (String) -> Unit, enabled: Boolean) {
     var text by rememberSaveable { mutableStateOf("") }
     Row(
         modifier = Modifier.fillMaxWidth().imePadding().padding(horizontal = 16.dp, vertical = 8.dp),
@@ -387,12 +423,13 @@ private fun CommentInput(onSend: (String) -> Unit) {
         OutlinedTextField(
             value = text,
             onValueChange = { if (it.length <= 500) text = it },
-            placeholder = { Text("Add a comment") },
+            placeholder = { Text(if (enabled) "Add a comment" else "Set up a profile to comment") },
+            enabled = enabled,
             modifier = Modifier.weight(1f),
             maxLines = 4,
         )
         IconButton(
-            enabled = text.isNotBlank(),
+            enabled = enabled && text.isNotBlank(),
             onClick = {
                 onSend(text)
                 text = ""

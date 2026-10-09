@@ -40,6 +40,11 @@ sealed class Screen(val route: String, val label: String, val icon: ImageVector?
     /** The user's own private safety reports. */
     data object SafetyReports : Screen("safety_reports", "My safety reports")
 
+    /** Onboarding: pick a name (device profile) or, when the build has a server, use an account. */
+    data object Welcome : Screen("auth/welcome", "Welcome")
+    data object SignIn : Screen("auth/sign_in", "Sign in")
+    data object SignUp : Screen("auth/sign_up", "Sign up")
+
     companion object {
         val bottomBarItems = listOf(Feed, Map, ReportHub, Profile)
     }
