@@ -1,4 +1,4 @@
-// Ktor REST API: stores reports, images, users; serves the social feed.
+/e// Ktor REST API: stores reports, images, users; serves the social feed.
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
