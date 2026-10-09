@@ -1,0 +1,16 @@
+# Copy the lines you need into local.properties (which is git-ignored — never commit real keys).
+# Everything here is optional: with none of it set the app still builds and runs fully on-device.
+
+# Android SDK location. Android Studio writes this for you.
+#sdk.dir=/home/you/Android/Sdk
+
+# Supabase project: accounts, the shared feed and photo storage.
+# Project Settings -> API in the Supabase dashboard. See docs/BACKEND_SETUP.md.
+# The anon key is meant to ship in client apps; row-level security is what protects the data.
+# The service_role key must NEVER go here.
+#supabase.url=https://your-project-ref.supabase.co
+#supabase.anonKey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Server-side AI proxy (a Supabase Edge Function, say). Empty = AI features stay off.
+# A model API key must never be set here: it would ship inside the APK. See ai/AiAssistant.kt.
+#ai.proxyUrl=https://your-project-ref.supabase.co/functions/v1/civic-ai

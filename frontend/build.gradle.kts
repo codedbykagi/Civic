@@ -1,4 +1,6 @@
 // Android app: Jetpack Compose UI, CameraX capture, GPS tagging, offline record (Room).
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +8,19 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
+
+/**
+ * Cloud credentials live in the git-ignored local.properties, never in the repo:
+ *   supabase.url=https://<project-ref>.supabase.co
+ *   supabase.anonKey=<anon public key>
+ *   ai.proxyUrl=<optional, see docs/BACKEND_SETUP.md>
+ * All three are optional. With supabase.* missing the app runs fully on-device (device profile, local feed),
+ * so a build without any backend still produces a usable APK. See docs/BACKEND_SETUP.md.
+ */
+val localProps = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+fun localProp(key: String): String = (System.getenv(key.replace('.', '_').uppercase()) ?: localProps.getProperty(key) ?: "").trim()
 
 android {
     namespace = "com.civic.app"
@@ -15,13 +30,21 @@ android {
         applicationId = "com.civic.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.3.0"
+        versionCode = 4
+        versionName = "0.4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // 10.0.2.2 = host machine's localhost from the Android emulator
         buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080\"")
+
+        // Supabase (Postgres + auth + photo storage). Empty = on-device only; the app degrades gracefully.
+        // The anon key is designed to ship in clients: row-level security in the database is what protects data.
+        buildConfigField("String", "SUPABASE_URL", "\"${localProp("supabase.url").trimEnd('/')}\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY", "\"${localProp("supabase.anonKey")}\"")
+
+        // Room left for AI: a server-side proxy URL, so no model API key is ever shipped in the APK.
+        buildConfigField("String", "AI_PROXY_URL", "\"${localProp("ai.proxyUrl").trimEnd('/')}\"")
 
         // Walking-route servers (free FOSSGIS instances: max 1 request/s, prototype use only, not for production).
         // Kept in build config rather than code, as FOSSGIS asks, so they can be swapped for a self-hosted server.
