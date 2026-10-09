@@ -37,6 +37,9 @@ A user takes a photo; the app tags it with GPS location and time, saves a record
   - The Gradle wrapper is now generated. Modules target Java 17 bytecode via `jvmTarget`; there's no toolchain, because no JDK 17 is installed.
 - **Deleted:** the original empty `Test.txt`.
 
+## Diagrams
+- Architecture overview (archify, at commit 3a7c7ff): `.archify/architecture-civic-overview-20261009-142611/civic-overview.html`. Not gitignored.
+
 ## Layout (one Gradle build, three modules)
 | Module | Stack | Status |
 |---|---|---|

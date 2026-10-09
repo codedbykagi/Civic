@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "bdce6524-9962-4bec-bdbc-3f636a1309b1",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\ar0hu\\Documents\\civic\\.archify\\architecture-civic-overview-20261009-142611\\candidate.json",
+  "output": "C:\\Users\\ar0hu\\Documents\\civic\\.archify\\architecture-civic-overview-20261009-142611\\civic-overview.html",
+  "specification": {
+    "sha256": "603d5f55266f921da61bee5f087cea6ef57531f174ff9b0f601961dd472c1158",
+    "bytes": 7962
+  },
+  "artifact": {
+    "sha256": "ac7c5a9ac8aaa343c237be04c3a35fafa9bdb1a28040a86955bd82a53b61f5d2",
+    "bytes": 779067
+  }
+}

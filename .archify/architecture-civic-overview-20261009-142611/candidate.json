@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Civic: Offline-First Reporting App",
+    "output": ".archify/architecture-civic-overview-20261009-142611/civic-overview.html",
+    "quality_profile": "showcase",
+    "locale": "en",
+    "repository": {
+      "url": "https://github.com/codedbykagi/Civic",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "3a7c7ffd015169d236587bcfb904c867c941aad6"
+    },
+    "legend": {
+      "entries": {
+        "frontend": { "label": "Compose UI" },
+        "backend": { "label": "App / server logic" },
+        "database": { "label": "Storage" },
+        "cloud": { "label": "Android platform service" },
+        "external": { "label": "People & external services" }
+      }
+    }
+  },
+  "components": [
+    { "id": "citizen", "type": "external", "label": "Citizen", "sublabel": "phone user", "icon": "person", "pos": [40, 230], "size": [120, 60] },
+    { "id": "screens", "type": "frontend", "label": "Compose screens", "sublabel": "Feed · Map · Capture · Post · Detail", "pos": [220, 220], "size": [200, 80],
+      "sources": [
+        { "path": "frontend/src/main/java/com/civic/app/ui/navigation/Screen.kt", "line": 10, "end_line": 36, "label": "routes" },
+        { "path": "frontend/src/main/java/com/civic/app/ui/screens/report/CreateReportScreen.kt", "line": 172, "label": "addReport on Post" }
+      ] },
+    { "id": "photos", "type": "database", "label": "Photo files", "sublabel": "app storage JPEGs", "pos": [250, 60], "size": [140, 60],
+      "sources": [
+        { "path": "frontend/src/main/java/com/civic/app/camera/PhotoStorage.kt", "line": 8 },
+        { "path": "frontend/src/main/java/com/civic/app/ui/screens/capture/CaptureScreen.kt", "line": 134, "end_line": 143, "label": "CameraX writes file" }
+      ] },
+    { "id": "quick", "type": "backend", "label": "QuickReporter", "sublabel": "one-tap felt unsafe", "pos": [230, 400], "size": [180, 64],
+      "sources": [
+        { "path": "frontend/src/main/java/com/civic/app/safety/QuickReporter.kt", "line": 48, "end_line": 83 },
+        { "path": "frontend/src/main/java/com/civic/app/ui/components/SafetyComponents.kt", "line": 80 }
+      ] },
+    { "id": "location", "type": "cloud", "label": "LocationProvider", "sublabel": "Fused Location, 8s timeout", "pos": [230, 560], "size": [180, 64],
+      "sources": [
+        { "path": "frontend/src/main/java/com/civic/app/location/LocationProvider.kt", "line": 26, "end_line": 46 }
+      ] },
+    { "id": "repo", "type": "backend", "label": "ReportRepository", "sublabel": "AppContainer singleton", "pos": [520, 225], "size": [170, 70],
+      "sources": [
+        { "path": "frontend/src/main/java/com/civic/app/data/repository/ReportRepository.kt", "line": 24, "end_line": 80 },
+        { "path": "frontend/src/main/java/com/civic/app/CivicApplication.kt", "line": 32, "end_line": 44, "label": "manual DI" }
+      ] },
+    { "id": "room", "type": "database", "label": "Room civic.db", "sublabel": "v3 · reports + comments", "pos": [520, 410], "size": [170, 64],
+      "sources": [
+        { "path": "frontend/src/main/java/com/civic/app/data/local/CivicDatabase.kt", "line": 8 },
+        { "path": "frontend/src/main/java/com/civic/app/CivicApplication.kt", "line": 33 }
+      ] },
+    { "id": "planner", "type": "backend", "label": "SafeRoutePlanner", "sublabel": "re-scores routes on phone", "pos": [520, 70], "size": [170, 70],
+      "sources": [
+        { "path": "frontend/src/main/java/com/civic/app/safety/routing/SafeRoutePlanner.kt", "line": 27, "end_line": 42 },
+        { "path": "frontend/src/main/java/com/civic/app/ui/screens/map/MapViewModel.kt", "line": 131, "label": "Map calls plan()" }
+      ] },
+    { "id": "valhalla", "type": "external", "label": "FOSSGIS Valhalla", "sublabel": "pedestrian routing", "pos": [840, 20], "size": [170, 56],
+      "sources": [
+        { "path": "frontend/build.gradle.kts", "line": 28 },
+        { "path": "frontend/src/main/java/com/civic/app/safety/routing/ValhallaRouter.kt", "line": 1 }
+      ] },
+    { "id": "osrm", "type": "external", "label": "OSRM foot", "sublabel": "routing.openstreetmap.de", "pos": [840, 110], "size": [170, 56],
+      "sources": [
+        { "path": "frontend/build.gradle.kts", "line": 29 },
+        { "path": "frontend/src/main/java/com/civic/app/safety/routing/OsrmFootRouter.kt", "line": 1 }
+      ] },
+    { "id": "server", "type": "backend", "label": "Ktor server :8080", "sublabel": "routes → ReportService", "pos": [840, 225], "size": [170, 70],
+      "sources": [
+        { "path": "backend/src/main/kotlin/com/civic/backend/plugins/Routing.kt", "line": 14, "end_line": 22 },
+        { "path": "backend/src/main/kotlin/com/civic/backend/routes/ReportRoutes.kt", "line": 15, "end_line": 27 },
+        { "path": "backend/src/main/kotlin/com/civic/backend/service/ReportService.kt", "line": 10, "end_line": 30 }
+      ] },
+    { "id": "inmem", "type": "database", "label": "In-memory repo", "sublabel": "ConcurrentHashMap", "pos": [1110, 225], "size": [160, 70],
+      "sources": [
+        { "path": "backend/src/main/kotlin/com/civic/backend/repository/ReportRepository.kt", "line": 13, "end_line": 18 }
+      ] },
+    { "id": "sqldb", "type": "database", "label": "H2 / Postgres", "sublabel": "Exposed tables, not read yet", "pos": [840, 410], "size": [170, 64],
+      "sources": [
+        { "path": "backend/src/main/kotlin/com/civic/backend/db/DatabaseFactory.kt", "line": 8, "end_line": 12 },
+        { "path": "backend/src/main/kotlin/com/civic/backend/plugins/Database.kt", "line": 6, "end_line": 12 }
+      ] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Android app (com.civic.app)", "wraps": ["screens", "photos", "quick", "location", "repo", "room", "planner"] },
+    { "kind": "region", "label": "Backend (dev, not wired to app)", "wraps": ["server", "inmem", "sqldb"] }
+  ],
+  "connections": [
+    { "id": "citizen-uses-screens", "from": "citizen", "to": "screens", "label": "taps", "variant": "emphasis" },
+    { "id": "screens-to-repo", "from": "screens", "to": "repo", "label": "ViewModels", "variant": "emphasis", "fromSide": "right", "toSide": "left" },
+    { "id": "repo-to-room", "from": "repo", "to": "room", "label": "DAO · Flow", "variant": "emphasis" },
+    { "id": "screens-to-photos", "from": "screens", "to": "photos", "label": "CameraX JPEG" },
+    { "id": "screens-to-quick", "from": "screens", "to": "quick", "label": "felt unsafe" },
+    { "id": "quick-to-repo", "from": "quick", "to": "repo", "label": "addReport", "fromSide": "right", "toSide": "left" },
+    { "id": "quick-to-location", "from": "quick", "to": "location", "label": "GPS fix" },
+    { "id": "screens-to-planner", "from": "screens", "to": "planner", "label": "plan route", "fromSide": "right", "toSide": "left" },
+    { "id": "planner-to-valhalla", "from": "planner", "to": "valhalla", "label": "HTTPS first" },
+    { "id": "planner-to-osrm", "from": "planner", "to": "osrm", "label": "fallback", "variant": "dashed" },
+    { "id": "repo-to-server", "from": "repo", "to": "server", "label": "getFeed unused", "variant": "dashed" },
+    { "id": "server-to-inmem", "from": "server", "to": "inmem", "label": "save/find" },
+    { "id": "server-to-sqldb", "from": "server", "to": "sqldb", "label": "create schema", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "On the phone", "items": ["Everything works offline: Room is the only live store", "Capture and Map screens also read LocationProvider", "Directions hand off to Google Maps by URL"] },
+    { "dot": "amber", "title": "Safety routing", "items": ["Valhalla first, retried with worst zones excluded", "OSRM foot + detours if Valhalla is unreachable"] },
+    { "dot": "slate", "title": "Not wired yet", "items": ["getRemoteFeed() has no caller; syncPending() is a TODO", "/media and /users return 501", "Server keeps reports in memory, not in H2/Postgres"] }
+  ]
+}
