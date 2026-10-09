@@ -54,14 +54,12 @@ fun FeedScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
-            Column {
-                Text("Civic", style = MaterialTheme.typography.headlineSmall)
-                Text(
-                    stringResource(R.string.app_tagline),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
+            // The header above already shows the wordmark, so the feed opens with the tagline.
+            Text(
+                stringResource(R.string.app_tagline),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
         item { QuickUnsafePanel(onReport = quickReport, compact = true) }
         if (list.isEmpty() && !filter.isActive) {

@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -34,6 +36,7 @@ import androidx.navigation.navArgument
 import com.civic.app.appContainer
 import com.civic.app.data.Draft
 import com.civic.app.safety.QuickReportEvent
+import com.civic.app.ui.components.CivicHeader
 import com.civic.app.ui.components.LocalAppSnackbarHost
 import com.civic.app.ui.components.rememberQuickReportAction
 import com.civic.app.ui.screens.capture.CaptureScreen
@@ -65,7 +68,12 @@ private data class QuickReportVisuals(
  * [onPendingQuickReportHandled] clears it.
  */
 @Composable
-fun CivicNavHost(pendingQuickReport: IssueCategory? = null, onPendingQuickReportHandled: () -> Unit = {}) {
+fun CivicNavHost(
+    pendingQuickReport: IssueCategory? = null,
+    onPendingQuickReportHandled: () -> Unit = {},
+    darkTheme: Boolean = true,
+    onDarkThemeChange: (Boolean) -> Unit = {},
+) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -104,6 +112,12 @@ fun CivicNavHost(pendingQuickReport: IssueCategory? = null, onPendingQuickReport
     }
 
     Scaffold(
+        // Main tabs get the header with the theme switch; pushed screens keep their own back-arrow bar.
+        topBar = {
+            if (Screen.bottomBarItems.any { it.route == currentRoute }) {
+                CivicHeader(darkTheme = darkTheme, onDarkThemeChange = onDarkThemeChange)
+            }
+        },
         snackbarHost = {
             SnackbarHost(snackbarHost) { data ->
                 val visuals = data.visuals as? QuickReportVisuals
@@ -129,13 +143,18 @@ fun CivicNavHost(pendingQuickReport: IssueCategory? = null, onPendingQuickReport
             }
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceContainerLow, tonalElevation = 0.dp) {
                 Screen.bottomBarItems.forEach { screen ->
                     NavigationBarItem(
                         selected = currentRoute == screen.route,
                         onClick = { navController.navigateToTab(screen.route) },
                         icon = { screen.icon?.let { Icon(it, contentDescription = screen.label) } },
                         label = { Text(screen.label) },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+                            selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                            indicatorColor = MaterialTheme.colorScheme.primary,
+                        ),
                     )
                 }
             }

@@ -1,5 +1,7 @@
 package com.civic.app.ui.components
 
+import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,7 +56,12 @@ fun ReportCard(
     val categoryName = categoryName(report.category)
     var confirmDelete by remember { mutableStateOf(false) }
 
-    Card(onClick = onOpen, modifier = modifier.fillMaxWidth()) {
+    Card(
+        onClick = onOpen,
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+    ) {
         report.localImagePath?.let { path ->
             AsyncImage(
                 model = File(path),
@@ -111,9 +118,10 @@ fun ReportCard(
 fun StatusBadge(status: IssueStatus, modifier: Modifier = Modifier) {
     val colors = MaterialTheme.colorScheme
     val (bg, fg) = when (status) {
-        IssueStatus.RESOLVED -> colors.primaryContainer to colors.onPrimaryContainer
+        // Red means "still needs attention"; a solved issue flips to the inverse (white on black, or black on white).
+        IssueStatus.REPORTED -> colors.primary to colors.onPrimary
         IssueStatus.IN_PROGRESS, IssueStatus.ACKNOWLEDGED -> colors.tertiaryContainer to colors.onTertiaryContainer
-        IssueStatus.REPORTED -> colors.surfaceVariant to colors.onSurfaceVariant
+        IssueStatus.RESOLVED -> colors.inverseSurface to colors.inverseOnSurface
     }
     Surface(color = bg, contentColor = fg, shape = MaterialTheme.shapes.small, modifier = modifier) {
         Text(
